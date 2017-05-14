@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.leoxk.novelbrowser.ui.SearchPageActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorBlue">
+
+        <TextView
+            android:id="@+id/tv_search_action"
+            android:text="@string/actionCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textSize="6pt"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="24dp"
+            android:padding="0dp"
+            android:background="@color/colorBlue"
+            android:textColor="@color/colorWhite"/>
+
+        <EditText
+            android:id="@+id/et_search_text"
+            android:hint="@string/searchHint"
+            android:paddingStart="40dp"
+            android:textSize="6pt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:padding="8dp"
+            android:background="@color/colorWhite"
+            android:layout_toLeftOf="@+id/tv_search_action"/>
+
+        <ImageView
+            android:src="@drawable/search"
+            android:layout_alignLeft="@+id/et_search_text"
+            android:layout_alignTop="@+id/et_search_text"
+            android:layout_alignBottom="@+id/et_search_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_search_delete"
+        android:text="@string/deleteAll"
+        android:background="@color/colorWhite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@+id/lv_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+</LinearLayout>

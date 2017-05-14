@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">小说浏览器</string>
+
+    <!-- MainActivity -->
+    <string name="searchHint">搜索或输入网址</string>
+
+    <!-- 工具箱 -->
+    <string name="collect">添加收藏</string>
+    <string name="list">收藏|历史</string>
+    <string name="screen">全屏显示</string>
+    <string name="cancelScreen">取消全屏</string>
+    <string name="nopic">无图模式</string>
+    <string name="setHome">设为主页</string>
+    <string name="share">分享</string>
+    <string name="reload">刷新</string>
+    <string name="exit">退出</string>
+
+    <!-- SearchPageActivity -->
+    <string name="actionCancel">取消</string>
+    <string name="actionEnter">进入</string>
+    <string name="actionSearch">搜索</string>
+    <string name="deleteAll">清空搜索记录</string>
+
+    <!-- ListFragmentActivity -->
+    <string name="listCollect">收藏</string>
+    <string name="listHistory">历史</string>
+    <string name="deleteAllCollections">清空收藏</string>
+    <string name="deleteAllHistory">清空浏览历史</string>
+    <string name="title_activity_reading_mode">ReadingModeActivity</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
+
+    <!-- ReadingFragment -->
+    <string name="cancel">取消</string>
+    <string name="findHint">网页内搜索</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

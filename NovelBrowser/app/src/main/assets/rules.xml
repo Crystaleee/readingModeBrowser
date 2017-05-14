@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sites>
+    <site name="uu小说">
+        <info>
+            <host>uuxs.net</host>
+            <start>http://m.uuxs.net/book/</start>
+            <pattern>^([0-9]+\/){2}[1-9][0-9]+.html$</pattern>
+        </info>
+        <page>
+            <title tag="id">BookTitle</title>
+            <text tag="id">BookText</text>
+            <prev tag="id">book-prev</prev>
+            <next tag="id">book-next</next>
+        </page>
+    </site>
+
+    <site name="笔趣阁">
+        <info>
+            <host>biqudu.com</host>
+            <start>http://m.biqudu.com/</start>
+            <pattern>^([1-9][0-9]+_[0-9]+)\/[1-9][0-9]+.html$</pattern>
+        </info>
+        <page>
+            <title tag="id">nr_title</title>
+            <text tag="id">nr1</text>
+            <prev tag="id">pt_prev</prev>
+            <next tag="id">pt_next</next>
+        </page>
+    </site>
+
+    <site name="知乎">
+        <info>
+            <host>zhihu.com</host>
+            <start>https://www.zhihu.com/question</start>
+            <pattern>^([1-9][0-9]+_[0-9]+)\/[1-9][0-9]+.html$</pattern>
+        </info>
+        <page>
+            <title tag="class">QuestionHeader-title</title>
+            <text tag="class">RichText CopyrightRichText-richText</text>
+        </page>
+    </site>
+</sites>
