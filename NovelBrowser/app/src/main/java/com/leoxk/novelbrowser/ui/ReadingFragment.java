@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
@@ -14,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -26,6 +29,9 @@ import com.leoxk.novelbrowser.entity.Site;
 import com.leoxk.novelbrowser.util.JsoupUtil;
 
 import org.jsoup.nodes.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,19 +53,28 @@ public class ReadingFragment extends Fragment{
     View readingSearch;
     @Bind(R.id.scrollView_reading)
     ScrollView readingScroll;
+    @Bind(R.id.btn_next)
+    ImageButton next;
+    @Bind(R.id.btn_previous)
+    ImageButton previous;
 
     private String url;
     private Page cur;
     private Site site;
-    private String tvt;//阅读模式中的文本内容
+
+    private String tvt;             //阅读模式中的文本内容
     private Spannable WordtoSpan;
-    private BackgroundColorSpan yellowBg = new BackgroundColorSpan(0xFFFFFF00);
+    private int selectLength;       //所搜索的文字长度
+    private List<Integer> selectIndex = new ArrayList<Integer>(); //记录所有搜索结果起始位置
+    private int curSelectIndex = -1;
+
     private float x1 = 0;
     private float x2 = 0;
     private float y1 = 0;
     private float y2 = 0;
 
-    final static float STEP = 200;
+
+    final static float STEP = 200;  //调整字体大小最小距离
     float mRatio = 1.0f;
     int mBaseDist;
     float mBaseRatio;
@@ -100,10 +115,10 @@ public class ReadingFragment extends Fragment{
         tvText.setTextSize(mRatio+20);
         tvTitle.setTextSize(mRatio+30);
 
-        view.setOnTouchListener(touchListener);
+        readingScroll.setOnTouchListener(touchListener);
 
-//        readingSearch.animate().translationY(-readingSearch.getHeight());
-//        readingSearch.setVisibility(View.GONE);
+        readingSearch.animate().translationY(-readingSearch.getHeight());
+        readingSearch.setVisibility(View.GONE);
 
         return view;
     }
@@ -137,8 +152,8 @@ public class ReadingFragment extends Fragment{
                     x2 = event.getX();
                     y2 = event.getY();
 
-                    if (y2 - y1 > 300) {
-                        //向下滑动
+                    if (y2 - y1 > 300) {//向下滑动
+
                         if (readingScroll.getScrollY() == 0) {
                             //显示页内搜索
                             readingSearch.setVisibility(View.VISIBLE);
@@ -150,9 +165,15 @@ public class ReadingFragment extends Fragment{
                                         public void onAnimationEnd(Animator animation) {
                                             super.onAnimationEnd(animation);
                                             readingSearch.setVisibility(View.VISIBLE);
+                                            readingSearch.requestFocus();
                                         }
                                     });
                         }
+                    }else if(Math.abs(x2 - x1) > 300){//水平滑动
+                        WindowManager.LayoutParams layout = getActivity().getWindow().getAttributes();
+                        layout.screenBrightness = 1F;
+                        getActivity().getWindow().setAttributes(layout);
+
                     }
                 }
             }
@@ -261,8 +282,12 @@ public class ReadingFragment extends Fragment{
             if(span instanceof CharacterStyle)
                 WordtoSpan.removeSpan(span);
         }
+        //去除搜索记录
+        selectIndex.clear();
+        curSelectIndex = -1;
 
-        if (text.length() != 0) {
+
+        if ((selectLength = text.length()) != 0) {
             int ofe = tvt.indexOf(text,0);
             for(int ofs=0; ofs<tvt.length() && ofe!=-1; ofs=ofe+1)
             {
@@ -271,12 +296,36 @@ public class ReadingFragment extends Fragment{
                     break;
                 else
                 {
-                    WordtoSpan.setSpan(yellowBg, ofe, ofe+text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    tvText.setText(WordtoSpan, TextView.BufferType.SPANNABLE);
+                    WordtoSpan.setSpan(new BackgroundColorSpan(0xFFFFFF00), ofe, ofe+text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    selectIndex.add(ofe);
                 }
             }
+            tvText.setText(WordtoSpan, TextView.BufferType.SPANNABLE);
+            nextWord();
         }
     }
 
+    @OnClick(R.id.btn_next)
+    void nextWord(){
+        if(curSelectIndex < selectIndex.size()-1){
+            curSelectIndex++;
+            int start = selectIndex.get(curSelectIndex);
+            scrollToIndex(start, start + selectLength);
+        }
+    }
+
+    @OnClick(R.id.btn_previous)
+    void previousWord(){
+        if(curSelectIndex > 0){
+            curSelectIndex--;
+            int start = selectIndex.get(curSelectIndex);
+            scrollToIndex(start, start + selectLength);
+        }
+    }
+
+     public void scrollToIndex(int pos, int pos2){
+         Layout layout = tvText.getLayout();
+         readingScroll.scrollTo(0, layout.getLineTop(layout.getLineForOffset(pos2)));
+    }
 
 }

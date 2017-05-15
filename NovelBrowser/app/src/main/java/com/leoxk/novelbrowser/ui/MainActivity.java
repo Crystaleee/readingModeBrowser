@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnMainHome;
     @Bind(R.id.main_bottom)
     View bottom;
-    @Bind(R.id.reading_search)
-    View readingSearch;
 
     private long exitTime;              //上次按下返回键的时间
 
@@ -84,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
-        readingSearch.animate().translationY(-readingSearch.getHeight());
-        readingSearch.setVisibility(View.GONE);
         initWebView();
     }
 
