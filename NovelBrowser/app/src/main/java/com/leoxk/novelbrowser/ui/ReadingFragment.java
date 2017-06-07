@@ -5,21 +5,24 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.CharacterStyle;
-import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.leoxk.novelbrowser.NovelBrowserApplication;
@@ -57,6 +60,10 @@ public class ReadingFragment extends Fragment{
     ImageButton next;
     @Bind(R.id.btn_previous)
     ImageButton previous;
+    @Bind(R.id.seekbar_brigtness)
+    SeekBar seekBar_brightness;
+    @Bind(R.id.layout_brightness)
+    View brightnessLayout;
 
     private String url;
     private Page cur;
@@ -78,6 +85,8 @@ public class ReadingFragment extends Fragment{
     float mRatio = 1.0f;
     int mBaseDist;
     float mBaseRatio;
+
+    int screenWidth;//屏幕宽度
 
     private OnFragmentInteractionListener mListener;
 
@@ -115,10 +124,18 @@ public class ReadingFragment extends Fragment{
         tvText.setTextSize(mRatio+20);
         tvTitle.setTextSize(mRatio+30);
 
+        //设置seekbar
+        setSeekBar();
+
+        //设置touchListener
         readingScroll.setOnTouchListener(touchListener);
 
+        //隐藏搜索栏
         readingSearch.animate().translationY(-readingSearch.getHeight());
         readingSearch.setVisibility(View.GONE);
+
+        //隐藏亮度条
+        brightnessLayout.setVisibility(View.GONE);
 
         return view;
     }
@@ -126,7 +143,7 @@ public class ReadingFragment extends Fragment{
     //监听触摸事件
     View.OnTouchListener touchListener = new View.OnTouchListener(){
         public boolean onTouch(View v, MotionEvent event) {
-            Log.i("touch","ontouchlistener");
+
             if (event.getPointerCount() == 2) {//两个手指缩放
                 int action = event.getAction();
                 int pureaction = action & MotionEvent.ACTION_MASK;
@@ -142,13 +159,13 @@ public class ReadingFragment extends Fragment{
                 }
             }
             else if(event.getPointerCount() ==1){//一个手指滑动
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    //当手指按下的时候
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {//当手指按下的时候
+
                     x1 = event.getX();
                     y1 = event.getY();
                 }
-                else if(event.getAction() == MotionEvent.ACTION_UP) {
-                    //当手指离开的时候
+                else if(event.getAction() == MotionEvent.ACTION_UP) {//当手指离开的时候
+
                     x2 = event.getX();
                     y2 = event.getY();
 
@@ -169,17 +186,89 @@ public class ReadingFragment extends Fragment{
                                         }
                                     });
                         }
-                    }else if(Math.abs(x2 - x1) > 300){//水平滑动
-                        WindowManager.LayoutParams layout = getActivity().getWindow().getAttributes();
-                        layout.screenBrightness = 1F;
-                        getActivity().getWindow().setAttributes(layout);
+                    }
 
+                    //使亮度条渐渐隐去
+//                    brightnessLayout.animate()
+//                                    .alpha(0f)
+//                                    .setDuration(400)
+//                                    .setListener(new AnimatorListenerAdapter() {
+//                                        @Override
+//                                        public void onAnimationEnd(Animator animation) {
+//
+//                                            brightnessLayout.animate().alpha(1f).setDuration(0);
+//                                        }
+//                                    });
+                    brightnessLayout.setVisibility(View.GONE);
+
+                }
+                else{//当手指在滑动时
+                    float delta = event.getX()-x1;
+                    if(Math.abs(delta) > 80){
+                        brightnessLayout.setVisibility(View.VISIBLE);
+                        seekBar_brightness.setProgress(seekBar_brightness.getProgress() + (int)delta * 10 / screenWidth);
                     }
                 }
             }
             return false;
         }
     };
+
+    public void setSeekBar(){
+        //初始化seekbar的最大值和当前值
+        seekBar_brightness.setMax(255);
+        seekBar_brightness.setProgress(getSystemBrightness());
+
+        //获取屏幕宽度
+        Display mdisp = getActivity().getWindowManager().getDefaultDisplay();
+        screenWidth= mdisp.getWidth();
+
+        seekBar_brightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                changeAppBrightness(progress);
+                //Toast.makeText(getActivity().getApplicationContext(), seekBar.getProgress()+" "+seekBar.getMax(), Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    /**
+     * 改变App当前Window亮度
+     */
+    public void changeAppBrightness(int brightness) {
+        Window window = this.getActivity().getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+        if (brightness == -1) {
+            lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        } else {
+            lp.screenBrightness = (brightness <= 0 ? 1 : brightness) / 255f;
+        }
+        window.setAttributes(lp);
+    }
+
+    /**
+     * 获得系统亮度
+     */
+    private int getSystemBrightness(){
+        int systemBrightness = 0;
+        try {
+            systemBrightness = Settings.System.getInt(getActivity().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return systemBrightness;
+    }
 
     //计算触摸滑动距离
     int getDistance(MotionEvent event) {

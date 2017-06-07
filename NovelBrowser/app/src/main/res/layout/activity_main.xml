@@ -26,6 +26,7 @@
             android:maxLines="1"
             android:padding="8dp"
             android:paddingStart="15dp"
+            android:paddingEnd="40dp"
             android:text="@string/searchHint" />
 
         <ImageButton

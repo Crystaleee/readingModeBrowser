@@ -104,4 +104,37 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 </ScrollView>
+    <RelativeLayout
+        android:id="@+id/layout_brightness"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-50dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/brightness"
+            android:layout_marginLeft="30dp"
+            android:layout_centerVertical="true"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_brigtness"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:focusable="true"
+            android:maxHeight="2.0dip"
+            android:minHeight="2.0dip"
+            android:progressDrawable="@drawable/po_seekbar"
+            android:thumb="@drawable/seekbar_thumb" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/brightness"
+            android:layout_alignEnd="@id/seekbar_brigtness"
+            android:layout_marginRight="-30dp"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
 </LinearLayout>
