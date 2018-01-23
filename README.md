@@ -18,4 +18,4 @@ click the search button on the right of the address bar and key in word to searc
 <img src="./4font.png" width="33%" height="33%">
 
 ### Adjust lightness by sliding horizontally
-<img src="./6light.png" width="33%" height="33%">
+<img src="./6light.jpg" width="33%" height="33%">
